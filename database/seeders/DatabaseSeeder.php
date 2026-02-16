@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Menu;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,8 +14,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // SiteSettingsSeeder::class,
-            // PermissionsSeeder::class,
+            SiteSettingsSeeder::class,
+            //PermissionsSeeder::class,
             MenuSeeder::class,
             RolesSeeder::class,
             TeamSeeder::class,
