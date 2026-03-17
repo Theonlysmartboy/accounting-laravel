@@ -6,7 +6,7 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -36,7 +36,7 @@ class BankStatementResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
     
-    protected static ?string $navigationGroup = 'Banking';
+    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
     protected static ?int $navigationSort = 2;
 
@@ -52,7 +52,7 @@ class BankStatementResource extends Resource
                             ->helperText('The date of the bank statement'),
                         
                         Select::make('account_id')
-                            ->relationship('account', 'name')
+                            ->relationship('account', 'account_name')
                             ->label('Bank Account')
                             ->required()
                             ->searchable()
@@ -110,7 +110,7 @@ class BankStatementResource extends Resource
                     ->date()
                     ->sortable(),
                 
-                TextColumn::make('account.name')
+                TextColumn::make('account.account_name')
                     ->label('Bank Account')
                     ->searchable()
                     ->sortable(),

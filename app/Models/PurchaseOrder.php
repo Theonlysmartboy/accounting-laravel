@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class PurchaseOrder extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'purchase_order_id';
 
@@ -40,6 +42,11 @@ class PurchaseOrder extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'purchase_order_id');
+    }
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'purchase_order_id', 'purchase_order_id');
     }
 
     public static function generatePoNumber()

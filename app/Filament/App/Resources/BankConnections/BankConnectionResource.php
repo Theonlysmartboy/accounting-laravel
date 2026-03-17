@@ -8,14 +8,15 @@ use App\Filament\App\Resources\BankConnections\Pages\ListBankConnections;
 use App\Filament\App\Resources\BankConnections\Pages\ViewBankConnection;
 use App\Models\BankConnection;
 use App\Services\PlaidService;
+use Filament\Actions\CreateAction;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -30,9 +31,9 @@ class BankConnectionResource extends Resource
 {
     protected static ?string $model = BankConnection::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
     
-    protected static ?string $navigationGroup = 'Banking';
+    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
     protected static ?int $navigationSort = 1;
 
@@ -232,7 +233,7 @@ class BankConnectionResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label('New Connection'),
             ])
             ->defaultSort('created_at', 'desc');

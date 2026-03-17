@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Traits\IsTenantModel;
 
 class Customer extends Authenticatable
 {
+    use IsTenantModel;
     use HasFactory, Notifiable;
 
-    protected $primaryKey = 'customer_id';
+    // protected $primaryKey = 'customer_id';
     protected $guard = 'customer';
 
     protected $fillable = [
@@ -34,6 +36,31 @@ class Customer extends Authenticatable
     public function invoices()
     {
         return $this->hasMany(Invoice::class, 'customer_id');
+    }
+
+    public function estimates()
+    {
+        return $this->hasMany(Estimate::class, 'customer_id', 'customer_id');
+    }
+
+    public function creditMemos()
+    {
+        return $this->hasMany(CreditMemo::class, 'customer_id', 'customer_id');
+    }
+
+    public function salesReceipts()
+    {
+        return $this->hasMany(SalesReceipt::class, 'customer_id', 'customer_id');
+    }
+
+    public function delayedCharges()
+    {
+        return $this->hasMany(DelayedCharge::class, 'customer_id', 'customer_id');
+    }
+
+    public function refundReceipts()
+    {
+        return $this->hasMany(RefundReceipt::class, 'customer_id', 'customer_id');
     }
 
     public function isOverCreditLimit(): bool

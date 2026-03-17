@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\IsTenantModel;
 
 class Invoice extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
-    protected $primaryKey = "invoice_id";
+    // protected $primaryKey = "invoice_id";
 
    protected $fillable = [
     "customer_id",
@@ -71,6 +73,11 @@ protected $casts = [
     public function timeEntries()
     {
         return $this->hasMany(TimeEntry::class, 'invoice_id');
+    }
+
+    public function creditMemos()
+    {
+        return $this->hasMany(CreditMemo::class, 'invoice_id');
     }
 
     public function calculateTax()

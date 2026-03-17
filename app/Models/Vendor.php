@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class Vendor extends Model
 {
     use HasFactory;
+    use IsTenantModel;
+
+    protected $primaryKey = 'vendor_id';
 
     protected $fillable = [
         'name',
@@ -22,5 +26,15 @@ class Vendor extends Model
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'vendor_id', 'vendor_id');
+    }
+
+    public function vendorCredits()
+    {
+        return $this->hasMany(VendorCredit::class, 'vendor_id', 'vendor_id');
     }
 }

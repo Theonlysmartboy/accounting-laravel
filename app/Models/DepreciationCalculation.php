@@ -1,15 +1,15 @@
-
-
 <?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class DepreciationCalculation extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'asset_id',

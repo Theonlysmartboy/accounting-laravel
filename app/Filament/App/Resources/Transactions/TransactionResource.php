@@ -2,6 +2,11 @@
 
 namespace App\Filament\App\Resources\Transactions;
 
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -10,6 +15,8 @@ use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
 use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
 use Filament\Forms;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use App\Models\Transaction;
 use App\Models\Currency;
@@ -31,7 +38,7 @@ class TransactionResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     
-    protected static ?string $navigationGroup = 'Banking';
+    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
     protected static ?int $navigationSort = 3;
 
@@ -57,7 +64,7 @@ class TransactionResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
                             $defaultCurrency = Currency::where('is_default', true)->first();
@@ -136,7 +143,7 @@ class TransactionResource extends Resource
                         true => 'Reconciled',
                         false => 'Not Reconciled',
                     ]),
-                DateRangeFilter::make('transaction_date'),
+                // DateRangeFilter::make('transaction_date'),
             ])
             ->recordActions([
                 EditAction::make(),
