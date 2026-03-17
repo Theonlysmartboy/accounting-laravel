@@ -1,15 +1,15 @@
-
-
 <?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\IsTenantModel;
 
 class BankConnection extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'user_id',
@@ -20,13 +20,25 @@ class BankConnection extends Model
         'plaid_item_id',
         'plaid_institution_id',
         'plaid_cursor',
+        'revolut_access_token',
+        'revolut_refresh_token',
+        'revolut_token_expires_at',
+        'wise_access_token',
+        'wise_refresh_token',
+        'wise_token_expires_at',
         'status',
         'last_synced_at',
     ];
 
     protected $casts = [
-        'credentials' => 'encrypted',
+        'credentials' => 'encrypted:array',
         'plaid_access_token' => 'encrypted',
+        'revolut_access_token' => 'encrypted',
+        'revolut_refresh_token' => 'encrypted',
+        'revolut_token_expires_at' => 'datetime',
+        'wise_access_token' => 'encrypted',
+        'wise_refresh_token' => 'encrypted',
+        'wise_token_expires_at' => 'datetime',
         'last_synced_at' => 'datetime',
     ];
 
@@ -43,5 +55,10 @@ class BankConnection extends Model
     public function bankFeedTransactions()
     {
         return $this->hasMany(BankFeedTransaction::class);
+    }
+
+    public function balances()
+    {
+        return $this->hasMany(BankAccountBalance::class);
     }
 }

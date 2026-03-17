@@ -35,6 +35,25 @@ return [
         'client_id' => env('PLAID_CLIENT_ID'),
         'secret' => env('PLAID_SECRET'),
         'environment' => env('PLAID_ENV', 'sandbox'), // sandbox, development, production
+        'webhook_url' => env('PLAID_WEBHOOK_URL'),
+        'webhook_verification_key' => env('PLAID_WEBHOOK_VERIFICATION_KEY'),
+        'oauth_redirect_uri' => env('PLAID_OAUTH_REDIRECT_URI'),
+    ],
+
+    'revolut' => [
+        'client_id' => env('REVOLUT_CLIENT_ID'),
+        'client_secret' => env('REVOLUT_CLIENT_SECRET'),
+        'environment' => env('REVOLUT_ENV', 'sandbox'), // sandbox, production
+        'redirect_uri' => env('REVOLUT_REDIRECT_URI'),
+        'webhook_secret' => env('REVOLUT_WEBHOOK_SECRET'),
+    ],
+
+    'wise' => [
+        'client_id' => env('WISE_CLIENT_ID'),
+        'client_secret' => env('WISE_CLIENT_SECRET'),
+        'environment' => env('WISE_ENV', 'sandbox'), // sandbox, production
+        'redirect_uri' => env('WISE_REDIRECT_URI'),
+        'webhook_public_key' => env('WISE_WEBHOOK_PUBLIC_KEY'),
     ],
 
 ];

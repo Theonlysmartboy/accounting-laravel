@@ -2,9 +2,16 @@
 
 namespace App\Filament\App\Resources\Transactions;
 
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\ViewAction;
 use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
 use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
 use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
 use App\Models\Currency;
 use App\Models\Transaction;
 use App\Rules\DoubleEntryValidator;
@@ -53,7 +60,7 @@ class TransactionResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
                             $defaultCurrency = Currency::where('is_default', true)->first();
@@ -132,7 +139,7 @@ class TransactionResource extends Resource
                         true => 'Reconciled',
                         false => 'Not Reconciled',
                     ]),
-                DateRangeFilter::make('transaction_date'),
+                // DateRangeFilter::make('transaction_date'),
             ])
             ->recordActions([
                 EditAction::make(),

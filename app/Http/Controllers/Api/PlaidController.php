@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankAccountBalance;
 use App\Models\BankConnection;
 use App\Models\BankFeedTransaction;
 use App\Models\Transaction;
@@ -25,14 +26,33 @@ class PlaidController extends Controller
 
     /**
      * Create a link token for Plaid Link initialization
+     * Supports both initial connection and update mode for re-authentication
      */
     public function createLinkToken(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
             $language = $request->input('language', 'en');
+            $connectionId = $request->input('connection_id');
 
-            $tokenData = $this->plaidService->createLinkToken($user->id, $language);
+            $accessToken = null;
+
+            // If connection_id is provided, this is update mode for re-authentication
+            if ($connectionId) {
+                $connection = BankConnection::find($connectionId);
+
+                // Verify ownership
+                if (!$connection || $connection->user_id !== $user->id) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Connection not found or unauthorized',
+                    ], 404);
+                }
+
+                $accessToken = $connection->plaid_access_token;
+            }
+
+            $tokenData = $this->plaidService->createLinkToken($user->id, $language, $accessToken);
 
             return response()->json([
                 'success' => true,
@@ -283,6 +303,90 @@ class PlaidController extends Controller
     }
 
     /**
+     * Get account balances for a connection
+     */
+    public function getBalances(Request $request, BankConnection $connection): JsonResponse
+    {
+        try {
+            // Verify ownership
+            if ($connection->user_id !== $request->user()->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            // Check connection status
+            if ($connection->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Connection is not active',
+                ], 400);
+            }
+
+            DB::beginTransaction();
+            try {
+                // Get balances from Plaid
+                $balanceData = $this->plaidService->getBalances($connection->plaid_access_token);
+                
+                $accounts = $balanceData['accounts'] ?? [];
+                $syncedAccounts = [];
+
+                foreach ($accounts as $account) {
+                    $balance = BankAccountBalance::updateOrCreate(
+                        [
+                            'bank_connection_id' => $connection->id,
+                            'plaid_account_id' => $account['account_id'],
+                        ],
+                        [
+                            'account_name' => $account['name'],
+                            'account_type' => $account['type'],
+                            'account_subtype' => $account['subtype'] ?? null,
+                            'current_balance' => $account['balances']['current'] ?? null,
+                            'available_balance' => $account['balances']['available'] ?? null,
+                            'limit_amount' => $account['balances']['limit'] ?? null,
+                            'iso_currency_code' => $account['balances']['iso_currency_code'] ?? null,
+                            'unofficial_currency_code' => $account['balances']['unofficial_currency_code'] ?? null,
+                            'last_updated_at' => now(),
+                        ]
+                    );
+
+                    $syncedAccounts[] = [
+                        'id' => $balance->id,
+                        'account_name' => $balance->account_name,
+                        'account_type' => $balance->account_type,
+                        'account_subtype' => $balance->account_subtype,
+                        'current_balance' => $balance->current_balance,
+                        'available_balance' => $balance->available_balance,
+                        'currency' => $balance->iso_currency_code ?? $balance->unofficial_currency_code,
+                    ];
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Balances synced successfully',
+                    'accounts' => $syncedAccounts,
+                ]);
+            } catch (Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            Log::error('Failed to get balances', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get balances: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Process a Plaid transaction and create/update in database
      */
     protected function processPlaidTransaction(array $plaidTransaction, BankConnection $connection, bool $isUpdate = false): void
@@ -309,7 +413,7 @@ class PlaidController extends Controller
         // Store raw Plaid data
         BankFeedTransaction::updateOrCreate(
             [
-                'transaction_id' => $transaction->id,
+                'transaction_id' => $transaction->getKey(),
                 'bank_connection_id' => $connection->id,
             ],
             [
@@ -341,5 +445,44 @@ class PlaidController extends Controller
 
         // Use the most specific category (last one in the array)
         return strtolower(end($categories));
+    }
+
+    /**
+     * Handle OAuth redirect from Plaid Link
+     * This endpoint receives the OAuth state after user authentication at their bank
+     */
+    public function handleOAuthRedirect(Request $request): JsonResponse
+    {
+        try {
+            $oauthStateId = $request->input('oauth_state_id');
+
+            if (!$oauthStateId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Missing OAuth state ID',
+                ], 400);
+            }
+
+            // Log the OAuth redirect for debugging
+            Log::info('Plaid OAuth redirect received', [
+                'oauth_state_id' => $oauthStateId,
+            ]);
+
+            // Return success - the frontend will handle completing the Link flow
+            return response()->json([
+                'success' => true,
+                'message' => 'OAuth redirect received successfully',
+                'oauth_state_id' => $oauthStateId,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Failed to handle Plaid OAuth redirect', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to handle OAuth redirect',
+            ], 500);
+        }
     }
 }

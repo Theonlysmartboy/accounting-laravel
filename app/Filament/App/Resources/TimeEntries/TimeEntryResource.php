@@ -35,7 +35,7 @@ class TimeEntryResource extends Resource
                     ->relationship('customer', 'customer_name')
                     ->required(),
                 Select::make('invoice_id')
-                    ->relationship('invoice', 'invoice_id')
+                    ->relationship('invoice', 'id')
                     ->nullable(),
                 DateTimePicker::make('start_time')
                     ->required(),
@@ -46,7 +46,7 @@ class TimeEntryResource extends Resource
                 TextInput::make('hourly_rate')
                     ->numeric()
                     ->required()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) => 
                         $set('total_amount', $record->calculateTotalAmount())
                     ),

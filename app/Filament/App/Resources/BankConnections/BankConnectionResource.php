@@ -8,6 +8,7 @@ use App\Filament\App\Resources\BankConnections\Pages\ListBankConnections;
 use App\Filament\App\Resources\BankConnections\Pages\ViewBankConnection;
 use App\Models\BankConnection;
 use App\Services\PlaidService;
+use Filament\Actions\CreateAction;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -15,12 +16,12 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -233,7 +234,7 @@ class BankConnectionResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label('New Connection'),
             ])
             ->defaultSort('created_at', 'desc');

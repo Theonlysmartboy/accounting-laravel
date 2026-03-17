@@ -10,10 +10,10 @@ use App\Models\JournalEntry;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -23,7 +23,9 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Illuminate\Support\HtmlString;
 use UnitEnum;
 
@@ -105,7 +107,7 @@ public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text
                                             ->default(0)
                                             ->step('0.01')
                                             ->prefix('$')
-                                            ->reactive()
+                                            ->live()
                                             ->afterStateUpdated(fn ($state, callable $set) => 
                                                 $state > 0 ? $set('credit_amount', 0) : null
                                             )
@@ -116,7 +118,7 @@ public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text
                                             ->default(0)
                                             ->step('0.01')
                                             ->prefix('$')
-                                            ->reactive()
+                                            ->live()
                                             ->afterStateUpdated(fn ($state, callable $set) => 
                                                 $state > 0 ? $set('debit_amount', 0) : null
                                             )
@@ -226,8 +228,8 @@ public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text
                     ]),
             ])
             ->recordActions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('post')
+                EditAction::make(),
+                Action::make('post')
                     ->icon('heroicon-o-arrow-up-circle')
                     ->color('success')
                     ->requiresConfirmation()
@@ -247,7 +249,7 @@ public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text
                                 ->send();
                         }
                     }),
-                Tables\Actions\Action::make('reverse')
+                Action::make('reverse')
                     ->icon('heroicon-o-arrow-down-circle')
                     ->color('warning')
                     ->requiresConfirmation()
@@ -267,7 +269,7 @@ public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text
                                 ->send();
                         }
                     }),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn ($record) => !$record->is_posted),
             ])
             ->defaultSort('entry_date', 'desc');

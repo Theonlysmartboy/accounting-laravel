@@ -2,6 +2,11 @@
 
 namespace App\Filament\App\Resources\BankStatements;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
 use App\Filament\App\Resources\BankStatements\Pages\EditBankStatement;
 use App\Filament\App\Resources\BankStatements\Pages\ListBankStatements;
@@ -52,7 +57,7 @@ class BankStatementResource extends Resource
                             ->helperText('The date of the bank statement'),
                         
                         Select::make('account_id')
-                            ->relationship('account', 'name')
+                            ->relationship('account', 'account_name')
                             ->label('Bank Account')
                             ->required()
                             ->searchable()
@@ -110,7 +115,7 @@ class BankStatementResource extends Resource
                     ->date()
                     ->sortable(),
                 
-                TextColumn::make('account.name')
+                TextColumn::make('account.account_name')
                     ->label('Bank Account')
                     ->searchable()
                     ->sortable(),
