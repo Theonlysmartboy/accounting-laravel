@@ -2,41 +2,41 @@
 
 namespace App\Filament\App\Resources\BankStatements;
 
-use Filament\Schemas\Schema;
+use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
+use App\Filament\App\Resources\BankStatements\Pages\EditBankStatement;
+use App\Filament\App\Resources\BankStatements\Pages\ListBankStatements;
+use App\Models\BankStatement;
+use App\Services\BankStatementImportService;
+use App\Services\ReconciliationService;
+use BackedEnum;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Section;
-use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Exception;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\BulkActionGroup;
-use App\Filament\App\Resources\BankStatements\Pages\ListBankStatements;
-use App\Filament\App\Resources\BankStatements\Pages\EditBankStatement;
-use App\Filament\App\Resources\BankStatementResource\Pages;
-use App\Models\BankStatement;
-use App\Services\ReconciliationService;
-use App\Services\BankStatementImportService;
-use Filament\Forms;
-use Filament\Resources\Resource;
-use Filament\Tables\Table;
-use Filament\Tables;
-use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use UnitEnum;
 
 class BankStatementResource extends Resource
 {
     protected static ?string $model = BankStatement::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
     
-    protected static ?string $navigationGroup = 'Banking';
+    public static UnitEnum|string|null $navigationGroup = 'Banking';
     
     protected static ?int $navigationSort = 2;
 

@@ -2,41 +2,40 @@
 
 namespace App\Filament\App\Resources\JournalEntries;
 
-use App\Filament\App\Resources\JournalEntries\Pages\ListJournalEntries;
 use App\Filament\App\Resources\JournalEntries\Pages\CreateJournalEntry;
 use App\Filament\App\Resources\JournalEntries\Pages\EditJournalEntry;
-use App\Models\JournalEntry;
+use App\Filament\App\Resources\JournalEntries\Pages\ListJournalEntries;
 use App\Models\Account;
-use App\Rules\DoubleEntryValidator;
-use Filament\Forms;
+use App\Models\JournalEntry;
+use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\Action;
+use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
+use UnitEnum;
 
 class JournalEntryResource extends Resource
 {
     protected static ?string $model = JournalEntry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationLabel = 'Journal Entries';
 
-    protected static ?string $navigationGroup = 'Accounting';
+    public static UnitEnum|string|null $navigationGroup  = 'Accounting';
 
     public static function form(Schema $schema): Schema
     {

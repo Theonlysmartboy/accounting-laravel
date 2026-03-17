@@ -8,32 +8,33 @@ use App\Filament\App\Resources\BankConnections\Pages\ListBankConnections;
 use App\Filament\App\Resources\BankConnections\Pages\ViewBankConnection;
 use App\Models\BankConnection;
 use App\Services\PlaidService;
-use Filament\Forms;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
+use BackedEnum;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Exception;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use UnitEnum;
 
 class BankConnectionResource extends Resource
 {
     protected static ?string $model = BankConnection::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
-    
-    protected static ?string $navigationGroup = 'Banking';
-    
+    public static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
+
+    public static UnitEnum|string|null $navigationGroup = 'Banking';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema

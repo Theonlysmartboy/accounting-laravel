@@ -2,36 +2,32 @@
 
 namespace App\Filament\App\Resources\Transactions;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
 use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
 use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Tables\Table;
-use App\Models\Transaction;
+use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
 use App\Models\Currency;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Transaction;
 use App\Rules\DoubleEntryValidator;
 use App\Services\ExchangeRateService;
-use App\Filament\App\Resources\TransactionResource\Pages;
-use App\Filament\App\Resources\TransactionResource\RelationManagers;
+use BackedEnum;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use UnitEnum;
 
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static BackedEnum|string|null $navigationIcon = 'heroicon-o-rectangle-stack';
     
-    protected static ?string $navigationGroup = 'Banking';
+    public static UnitEnum|string|null $navigationGroup = 'Banking';
     
     protected static ?int $navigationSort = 3;
 
